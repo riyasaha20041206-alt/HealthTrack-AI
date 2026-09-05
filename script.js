@@ -1,4 +1,5 @@
 
+
 let weight = document.getElementById("weight");
 let bloodPressure = document.getElementById("bloodPressure");
 let bloodSugar = document.getElementById("bloodSugar");
@@ -7,7 +8,6 @@ let waterIntake = document.getElementById("waterIntake");
 let sleepHours = document.getElementById("sleepHours");
 
 let healthScoreElement = document.getElementById("healthScore");
-
 let waterScoreElement = document.getElementById("waterScore");
 let sleepScoreElement = document.getElementById("sleepScore");
 let heartRateScoreElement = document.getElementById("heartRateScore");
@@ -28,11 +28,8 @@ function calculateHealthScore() {
 
     // Need exactly 7 days
     if (weeklyData.length < 7) {
-
         console.log("Days Completed:", weeklyData.length);
-
         healthScoreElement.textContent = "-- / 100";
-
         return;
     }
 
@@ -44,7 +41,6 @@ function calculateHealthScore() {
     let goodWaterDays = 0;
 
     for (let i = 0; i < 7; i++) {
-
         if (weeklyData[i].waterIntake >= 2) {
             goodWaterDays++;
         }
@@ -63,7 +59,6 @@ function calculateHealthScore() {
     let goodSleepDays = 0;
 
     for (let i = 0; i < 7; i++) {
-
         if (weeklyData[i].sleepHours >= 7) {
             goodSleepDays++;
         }
@@ -140,18 +135,10 @@ function calculateHealthScore() {
         }
     }
 
-    let bloodPressureFinalScore =
-        (goodBloodPressureDays / 7) * 15;
+    let bloodPressureFinalScore = (goodBloodPressureDays / 7) * 15;
 
-    console.log(
-        "Good Blood Pressure Days:",
-        goodBloodPressureDays
-    );
-
-    console.log(
-        "Blood Pressure Score:",
-        bloodPressureFinalScore
-    );
+    console.log("Good Blood Pressure Days:", goodBloodPressureDays);
+    console.log("Blood Pressure Score:", bloodPressureFinalScore);
 
 
     // ======================================
@@ -161,7 +148,6 @@ function calculateHealthScore() {
     let totalWeight = 0;
 
     for (let i = 0; i < 7; i++) {
-
         totalWeight += weeklyData[i].weight;
     }
 
@@ -203,7 +189,6 @@ function calculateHealthScore() {
 
     totalHealthScore = Math.round(totalHealthScore);
 
-
     console.log(
         "FINAL HEALTH SCORE:",
         totalHealthScore + "/100"
@@ -215,24 +200,23 @@ function calculateHealthScore() {
     healthScoreElement.textContent =
         totalHealthScore + " / 100";
 
+    waterScoreElement.textContent =
+        waterFinalScore.toFixed(1) + " / 20";
 
-waterScoreElement.textContent =
-    waterFinalScore.toFixed(1) + " / 20";
+    sleepScoreElement.textContent =
+        sleepFinalScore.toFixed(1) + " / 20";
 
-sleepScoreElement.textContent =
-    sleepFinalScore.toFixed(1) + " / 20";
+    heartRateScoreElement.textContent =
+        heartRateFinalScore.toFixed(1) + " / 20";
 
-heartRateScoreElement.textContent =
-    heartRateFinalScore.toFixed(1) + " / 20";
+    bloodSugarScoreElement.textContent =
+        bloodSugarFinalScore.toFixed(1) + " / 15";
 
-bloodSugarScoreElement.textContent =
-    bloodSugarFinalScore.toFixed(1) + " / 15";
+    bloodPressureScoreElement.textContent =
+        bloodPressureFinalScore.toFixed(1) + " / 15";
 
-bloodPressureScoreElement.textContent =
-    bloodPressureFinalScore.toFixed(1) + " / 15";
-
-weightScoreElement.textContent =
-    weightFinalScore.toFixed(1) + " / 10";
+    weightScoreElement.textContent =
+        weightFinalScore.toFixed(1) + " / 10";
 }
 
 
@@ -240,8 +224,7 @@ weightScoreElement.textContent =
 // SAVE TODAY'S DATA
 // ======================================
 
-saveBtn.addEventListener("click", function () {
-
+saveBtn.addEventListener("click", async function () {
 
     // Validation
 
@@ -336,7 +319,19 @@ saveBtn.addEventListener("click", function () {
     calculateHealthScore();
 
 
+    // ======================================
+    // SEND DATA AFTER 7 DAYS
+    // ======================================
+
+    if (weeklyData.length === 7) {
+
+        await sendDataToBackend();
+
+    }
+
+
     alert("Data Saved Successfully!");
+
 });
 
 
@@ -344,4 +339,49 @@ saveBtn.addEventListener("click", function () {
 // CALCULATE SCORE WHEN PAGE OPENS
 // ======================================
 
-calculateHealthScore();
+//calculateHealthScore();
+
+
+// ======================================
+// SEND DATA TO BACKEND
+// ======================================
+
+async function sendDataToBackend() {
+
+    try {
+
+        const response = await fetch(
+            "http://localhost:5000/analyze",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    healthData: weeklyData
+                })
+            }
+        );
+
+
+        const result = await response.json();
+
+
+        console.log(
+            "Backend Response:",
+            result
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Backend Error:",
+            error
+        );
+
+    }
+}
+
