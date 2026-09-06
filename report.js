@@ -1,6 +1,6 @@
 
-console.log("REPORT JS LOADED");
 
+console.log("REPORT JS LOADED");
 
 // ==========================================
 // GET 7 DAYS DATA FROM LOCAL STORAGE
@@ -48,7 +48,9 @@ let healthSummaryElement =
 
 if (weeklyData.length < 7) {
 
-    healthScoreElement.textContent = "-- / 100";
+    if (healthScoreElement) {
+        healthScoreElement.textContent = "-- / 100";
+    }
 
     console.log("7 days data not completed");
 
@@ -62,10 +64,9 @@ if (weeklyData.length < 7) {
 
     for (let i = 0; i < 7; i++) {
 
-        if (weeklyData[i].waterIntake >= 2) {
+        if (Number(weeklyData[i].waterIntake) >= 2) {
             goodWaterDays++;
         }
-
     }
 
     let waterScore =
@@ -80,10 +81,9 @@ if (weeklyData.length < 7) {
 
     for (let i = 0; i < 7; i++) {
 
-        if (weeklyData[i].sleepHours >= 7) {
+        if (Number(weeklyData[i].sleepHours) >= 7) {
             goodSleepDays++;
         }
-
     }
 
     let sleepScore =
@@ -99,7 +99,7 @@ if (weeklyData.length < 7) {
     for (let i = 0; i < 7; i++) {
 
         let heartRate =
-            weeklyData[i].heartRate;
+            Number(weeklyData[i].heartRate);
 
         if (
             heartRate >= 60 &&
@@ -107,7 +107,6 @@ if (weeklyData.length < 7) {
         ) {
             goodHeartRateDays++;
         }
-
     }
 
     let heartRateScore =
@@ -123,7 +122,7 @@ if (weeklyData.length < 7) {
     for (let i = 0; i < 7; i++) {
 
         let sugar =
-            weeklyData[i].bloodSugar;
+            Number(weeklyData[i].bloodSugar);
 
         if (
             sugar >= 70 &&
@@ -131,7 +130,6 @@ if (weeklyData.length < 7) {
         ) {
             goodBloodSugarDays++;
         }
-
     }
 
     let bloodSugarScore =
@@ -147,7 +145,8 @@ if (weeklyData.length < 7) {
     for (let i = 0; i < 7; i++) {
 
         let bp =
-            weeklyData[i].bloodPressure.split("/");
+            String(weeklyData[i].bloodPressure || "")
+                .split("/");
 
         let systolic =
             Number(bp[0]);
@@ -161,11 +160,8 @@ if (weeklyData.length < 7) {
             diastolic >= 60 &&
             diastolic <= 80
         ) {
-
             goodBloodPressureDays++;
-
         }
-
     }
 
     let bloodPressureScore =
@@ -181,13 +177,11 @@ if (weeklyData.length < 7) {
     for (let i = 0; i < 7; i++) {
 
         totalWeight +=
-            weeklyData[i].weight;
-
+            Number(weeklyData[i].weight);
     }
 
     let averageWeight =
         totalWeight / 7;
-
 
     let goodWeightDays = 0;
 
@@ -195,14 +189,13 @@ if (weeklyData.length < 7) {
 
         let difference =
             Math.abs(
-                weeklyData[i].weight -
+                Number(weeklyData[i].weight) -
                 averageWeight
             );
 
         if (difference <= 5) {
             goodWeightDays++;
         }
-
     }
 
     let weightScore =
@@ -226,35 +219,43 @@ if (weeklyData.length < 7) {
 
 
     // ======================================
-    // SHOW SCORES ON REPORT PAGE
+    // SHOW LOCAL CALCULATED SCORES
     // ======================================
 
-    healthScoreElement.textContent =
-        totalHealthScore + " / 100";
+    if (healthScoreElement) {
+        healthScoreElement.textContent =
+            totalHealthScore + " / 100";
+    }
 
+    if (waterScoreElement) {
+        waterScoreElement.textContent =
+            waterScore.toFixed(1) + " / 20";
+    }
 
-    waterScoreElement.textContent =
-        waterScore.toFixed(1) + " / 20";
+    if (sleepScoreElement) {
+        sleepScoreElement.textContent =
+            sleepScore.toFixed(1) + " / 20";
+    }
 
+    if (heartRateScoreElement) {
+        heartRateScoreElement.textContent =
+            heartRateScore.toFixed(1) + " / 20";
+    }
 
-    sleepScoreElement.textContent =
-        sleepScore.toFixed(1) + " / 20";
+    if (bloodSugarScoreElement) {
+        bloodSugarScoreElement.textContent =
+            bloodSugarScore.toFixed(1) + " / 15";
+    }
 
+    if (bloodPressureScoreElement) {
+        bloodPressureScoreElement.textContent =
+            bloodPressureScore.toFixed(1) + " / 15";
+    }
 
-    heartRateScoreElement.textContent =
-        heartRateScore.toFixed(1) + " / 20";
-
-
-    bloodSugarScoreElement.textContent =
-        bloodSugarScore.toFixed(1) + " / 15";
-
-
-    bloodPressureScoreElement.textContent =
-        bloodPressureScore.toFixed(1) + " / 15";
-
-
-    weightScoreElement.textContent =
-        weightScore.toFixed(1) + " / 10";
+    if (weightScoreElement) {
+        weightScoreElement.textContent =
+            weightScore.toFixed(1) + " / 10";
+    }
 
 
     // ======================================
@@ -265,222 +266,23 @@ if (weeklyData.length < 7) {
     console.log("WEEKLY REPORT");
     console.log("==============================");
 
-    console.log(
-        "Water Score:",
-        waterScore
-    );
-
-    console.log(
-        "Sleep Score:",
-        sleepScore
-    );
-
-    console.log(
-        "Heart Rate Score:",
-        heartRateScore
-    );
-
-    console.log(
-        "Blood Sugar Score:",
-        bloodSugarScore
-    );
-
-    console.log(
-        "Blood Pressure Score:",
-        bloodPressureScore
-    );
-
-    console.log(
-        "Weight Score:",
-        weightScore
-    );
+    console.log("Water Score:", waterScore);
+    console.log("Sleep Score:", sleepScore);
+    console.log("Heart Rate Score:", heartRateScore);
+    console.log("Blood Sugar Score:", bloodSugarScore);
+    console.log("Blood Pressure Score:", bloodPressureScore);
+    console.log("Weight Score:", weightScore);
 
     console.log(
         "FINAL HEALTH SCORE:",
         totalHealthScore + "/100"
     );
 
-
-    // ======================================
-    // AI HEALTH SUMMARY
-    // ======================================
-
-    //healthSummaryElement.innerHTML = "";
-
-
-    // Water recommendation
-
-    //if (waterScore < 20) {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Your water intake was low on some days. Try to increase your daily water intake.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // } else {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Excellent water intake throughout the week.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // }
-
-
-    // // Sleep recommendation
-
-    // if (sleepScore < 20) {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Your sleep was below 7 hours on some days. Try to maintain a regular sleep schedule.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // } else {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Excellent sleep consistency this week.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // }
-
-
-    // // Heart rate recommendation
-
-    // if (heartRateScore < 20) {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Heart rate was outside the selected normal range on some days.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // } else {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Heart rate remained within the selected normal range on most days.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // }
-
-
-    // // Blood sugar recommendation
-
-    // if (bloodSugarScore < 15) {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Blood sugar was outside the selected target range on some days.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // } else {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Blood sugar remained within the selected target range throughout the week.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // }
-
-
-    // // Blood pressure recommendation
-
-    // if (bloodPressureScore < 15) {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Blood pressure was outside the selected range on some days.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // } else {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Blood pressure remained within the selected range throughout the week.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // }
-
-
-    // // Weight recommendation
-
-    // if (weightScore < 10) {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Your weight varied during the week. Continue monitoring your weight regularly.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // } else {
-
-    //     let li =
-    //         document.createElement("li");
-
-    //     li.textContent =
-    //         "Your weight remained relatively stable this week.";
-
-    //     healthSummaryElement.appendChild(li);
-
-    // }
-
-
-    // Final summary
-
-    // let finalLi =
-    //     document.createElement("li");
-
-    // finalLi.textContent =
-    //     "Your overall weekly health score is " +
-    //     totalHealthScore +
-    //     " out of 100.";
-
-    // healthSummaryElement.appendChild(finalLi);
-
-
-    // ======================================
-    // SHOW 7 DAYS DATA
-    // ======================================
-
     console.log("==============================");
     console.log("7 DAYS HEALTH DATA");
     console.log("==============================");
 
     console.table(weeklyData);
-
 }
 
 
@@ -490,51 +292,55 @@ if (weeklyData.length < 7) {
 
 function createWeightChart() {
 
-    let chartContainer = document.getElementById("weightChart");
+    let chartContainer =
+        document.getElementById("weightChart");
 
-    if (!chartContainer) {
-        return;
-    }
+    if (!chartContainer) return;
 
-    // Clear placeholder
     chartContainer.innerHTML = "";
 
-    // If no data
     if (weeklyData.length === 0) {
-        chartContainer.textContent = "No weight data available";
+
+        chartContainer.textContent =
+            "No weight data available";
+
         return;
     }
 
-    // Get weight values
-    let weights = weeklyData.map(day => Number(day.weight));
+    let weights =
+        weeklyData.map(day => Number(day.weight));
 
     console.log("Weight Data:", weights);
 
-    // SVG dimensions
     let width = 400;
     let height = 100;
-
     let padding = 25;
 
-    // Find minimum and maximum weight
-    let minWeight = Math.min(...weights);
-    let maxWeight = Math.max(...weights);
+    let minWeight =
+        Math.min(...weights);
 
-    // Prevent same min/max problem
+    let maxWeight =
+        Math.max(...weights);
+
     if (minWeight === maxWeight) {
         minWeight -= 1;
         maxWeight += 1;
     }
 
-    // Create SVG
-    let svg = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "svg"
+    let svg =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+    svg.setAttribute(
+        "viewBox",
+        `0 0 ${width} ${height}`
     );
 
-    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
     svg.setAttribute("width", "100%");
     svg.setAttribute("height", "100");
+
 
     // ======================================
     // DRAW LINE
@@ -560,40 +366,22 @@ function createWeightChart() {
         points.push(`${x},${y}`);
     });
 
-    let polyline = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "polyline"
-    );
+    let polyline =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "polyline"
+        );
 
     polyline.setAttribute(
         "points",
         points.join(" ")
     );
 
-    polyline.setAttribute(
-        "fill",
-        "none"
-    );
-
-    polyline.setAttribute(
-        "stroke",
-       "#8B0000"
-    );
-
-    polyline.setAttribute(
-        "stroke-width",
-        "3"
-    );
-
-    polyline.setAttribute(
-        "stroke-linecap",
-        "round"
-    );
-
-    polyline.setAttribute(
-        "stroke-linejoin",
-        "round"
-    );
+    polyline.setAttribute("fill", "none");
+    polyline.setAttribute("stroke", "#8B0000");
+    polyline.setAttribute("stroke-width", "3");
+    polyline.setAttribute("stroke-linecap", "round");
+    polyline.setAttribute("stroke-linejoin", "round");
 
     svg.appendChild(polyline);
 
@@ -617,10 +405,14 @@ function createWeightChart() {
             (maxWeight - minWeight)) *
             (height - 2 * padding);
 
-        let circle = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "circle"
-        );
+
+        // Point
+
+        let circle =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "circle"
+            );
 
         circle.setAttribute("cx", x);
         circle.setAttribute("cy", y);
@@ -630,27 +422,33 @@ function createWeightChart() {
         svg.appendChild(circle);
 
 
-        // Weight value above point
-        let valueText = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+        // Weight value
+
+        let valueText =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
 
         valueText.setAttribute("x", x);
         valueText.setAttribute("y", y - 10);
         valueText.setAttribute("text-anchor", "middle");
         valueText.setAttribute("fill", "black");
         valueText.setAttribute("font-size", "10");
-        valueText.textContent = weight + " kg";
+
+        valueText.textContent =
+            weight + " kg";
 
         svg.appendChild(valueText);
 
 
         // Day label
-        let dayText = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+
+        let dayText =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
 
         dayText.setAttribute("x", x);
         dayText.setAttribute("y", height - 10);
@@ -658,23 +456,18 @@ function createWeightChart() {
         dayText.setAttribute("fill", "black");
         dayText.setAttribute("font-size", "9");
 
-        dayText.textContent = "Day " + (index + 1);
+        dayText.textContent =
+            "Day " + (index + 1);
 
         svg.appendChild(dayText);
-
     });
 
 
-    // Add SVG to chart container
     chartContainer.appendChild(svg);
 }
 
-
-// ==========================================
-// CALL WEIGHT CHART
-// ==========================================
-
 createWeightChart();
+
 
 // ==========================================
 // SVG WATER INTAKE TREND CHART
@@ -682,50 +475,70 @@ createWeightChart();
 
 function createWaterChart() {
 
-    let chartContainer = document.getElementById("waterChart");
+    let chartContainer =
+        document.getElementById("waterChart");
 
     if (!chartContainer) return;
 
     chartContainer.innerHTML = "";
 
     if (weeklyData.length === 0) {
-        chartContainer.textContent = "No water data available";
+
+        chartContainer.textContent =
+            "No water data available";
+
         return;
     }
 
-    let values = weeklyData.map(day => Number(day.waterIntake));
+    let values =
+        weeklyData.map(day =>
+            Number(day.waterIntake)
+        );
 
     let width = 400;
     let height = 100;
     let padding = 25;
 
-    let minValue = Math.min(...values);
-    let maxValue = Math.max(...values);
+    let minValue =
+        Math.min(...values);
+
+    let maxValue =
+        Math.max(...values);
 
     if (minValue === maxValue) {
         minValue -= 1;
         maxValue += 1;
     }
 
-    let svg = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "svg"
+    let svg =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+    svg.setAttribute(
+        "viewBox",
+        `0 0 ${width} ${height}`
     );
 
-    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
     svg.setAttribute("width", "100%");
     svg.setAttribute("height", "100");
+
+
+    // Line
 
     let points = [];
 
     values.forEach((value, index) => {
 
-        let x = padding +
+        let x =
+            padding +
             index *
             ((width - 2 * padding) /
             Math.max(values.length - 1, 1));
 
-        let y = height -
+        let y =
+            height -
             padding -
             ((value - minValue) /
             (maxValue - minValue)) *
@@ -734,12 +547,17 @@ function createWaterChart() {
         points.push(`${x},${y}`);
     });
 
-    let polyline = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "polyline"
+    let polyline =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "polyline"
+        );
+
+    polyline.setAttribute(
+        "points",
+        points.join(" ")
     );
 
-    polyline.setAttribute("points", points.join(" "));
     polyline.setAttribute("fill", "none");
     polyline.setAttribute("stroke", "#8B0000");
     polyline.setAttribute("stroke-width", "3");
@@ -748,24 +566,32 @@ function createWaterChart() {
 
     svg.appendChild(polyline);
 
+
+    // Points + Labels
+
     values.forEach((value, index) => {
 
-        let x = padding +
+        let x =
+            padding +
             index *
             ((width - 2 * padding) /
             Math.max(values.length - 1, 1));
 
-        let y = height -
+        let y =
+            height -
             padding -
             ((value - minValue) /
             (maxValue - minValue)) *
             (height - 2 * padding);
 
+
         // Point
-        let circle = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "circle"
-        );
+
+        let circle =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "circle"
+            );
 
         circle.setAttribute("cx", x);
         circle.setAttribute("cy", y);
@@ -774,11 +600,14 @@ function createWaterChart() {
 
         svg.appendChild(circle);
 
+
         // Value
-        let valueText = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+
+        let valueText =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
 
         valueText.setAttribute("x", x);
         valueText.setAttribute("y", y - 8);
@@ -786,15 +615,19 @@ function createWaterChart() {
         valueText.setAttribute("fill", "black");
         valueText.setAttribute("font-size", "9");
 
-        valueText.textContent = value + " L";
+        valueText.textContent =
+            value + " L";
 
         svg.appendChild(valueText);
 
+
         // Day
-        let dayText = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+
+        let dayText =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
 
         dayText.setAttribute("x", x);
         dayText.setAttribute("y", height - 5);
@@ -802,16 +635,17 @@ function createWaterChart() {
         dayText.setAttribute("fill", "black");
         dayText.setAttribute("font-size", "9");
 
-        dayText.textContent = "Day " + (index + 1);
+        dayText.textContent =
+            "Day " + (index + 1);
 
         svg.appendChild(dayText);
     });
+
 
     chartContainer.appendChild(svg);
 }
 
 createWaterChart();
-
 
 
 // ==========================================
@@ -820,50 +654,70 @@ createWaterChart();
 
 function createSleepChart() {
 
-    let chartContainer = document.getElementById("sleepChart");
+    let chartContainer =
+        document.getElementById("sleepChart");
 
     if (!chartContainer) return;
 
     chartContainer.innerHTML = "";
 
     if (weeklyData.length === 0) {
-        chartContainer.textContent = "No sleep data available";
+
+        chartContainer.textContent =
+            "No sleep data available";
+
         return;
     }
 
-    let values = weeklyData.map(day => Number(day.sleepHours));
+    let values =
+        weeklyData.map(day =>
+            Number(day.sleepHours)
+        );
 
     let width = 400;
     let height = 100;
     let padding = 25;
 
-    let minValue = Math.min(...values);
-    let maxValue = Math.max(...values);
+    let minValue =
+        Math.min(...values);
+
+    let maxValue =
+        Math.max(...values);
 
     if (minValue === maxValue) {
         minValue -= 1;
         maxValue += 1;
     }
 
-    let svg = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "svg"
+    let svg =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+    svg.setAttribute(
+        "viewBox",
+        `0 0 ${width} ${height}`
     );
 
-    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
     svg.setAttribute("width", "100%");
     svg.setAttribute("height", "100");
+
+
+    // Line
 
     let points = [];
 
     values.forEach((value, index) => {
 
-        let x = padding +
+        let x =
+            padding +
             index *
             ((width - 2 * padding) /
             Math.max(values.length - 1, 1));
 
-        let y = height -
+        let y =
+            height -
             padding -
             ((value - minValue) /
             (maxValue - minValue)) *
@@ -872,13 +726,17 @@ function createSleepChart() {
         points.push(`${x},${y}`);
     });
 
-    // Line
-    let polyline = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "polyline"
+    let polyline =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "polyline"
+        );
+
+    polyline.setAttribute(
+        "points",
+        points.join(" ")
     );
 
-    polyline.setAttribute("points", points.join(" "));
     polyline.setAttribute("fill", "none");
     polyline.setAttribute("stroke", "#8B0000");
     polyline.setAttribute("stroke-width", "3");
@@ -887,25 +745,30 @@ function createSleepChart() {
 
     svg.appendChild(polyline);
 
+
     // Points + Labels
+
     values.forEach((value, index) => {
 
-        let x = padding +
+        let x =
+            padding +
             index *
             ((width - 2 * padding) /
             Math.max(values.length - 1, 1));
 
-        let y = height -
+        let y =
+            height -
             padding -
             ((value - minValue) /
             (maxValue - minValue)) *
             (height - 2 * padding);
 
-        // Point
-        let circle = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "circle"
-        );
+
+        let circle =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "circle"
+            );
 
         circle.setAttribute("cx", x);
         circle.setAttribute("cy", y);
@@ -914,11 +777,14 @@ function createSleepChart() {
 
         svg.appendChild(circle);
 
+
         // Sleep value
-        let valueText = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+
+        let valueText =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
 
         valueText.setAttribute("x", x);
         valueText.setAttribute("y", y - 8);
@@ -926,15 +792,19 @@ function createSleepChart() {
         valueText.setAttribute("fill", "black");
         valueText.setAttribute("font-size", "9");
 
-        valueText.textContent = value + " h";
+        valueText.textContent =
+            value + " h";
 
         svg.appendChild(valueText);
 
+
         // Day label
-        let dayText = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+
+        let dayText =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
 
         dayText.setAttribute("x", x);
         dayText.setAttribute("y", height - 5);
@@ -942,10 +812,12 @@ function createSleepChart() {
         dayText.setAttribute("fill", "black");
         dayText.setAttribute("font-size", "9");
 
-        dayText.textContent = "Day " + (index + 1);
+        dayText.textContent =
+            "Day " + (index + 1);
 
         svg.appendChild(dayText);
     });
+
 
     chartContainer.appendChild(svg);
 }
@@ -959,50 +831,70 @@ createSleepChart();
 
 function createHeartRateChart() {
 
-    let chartContainer = document.getElementById("heartRateChart");
+    let chartContainer =
+        document.getElementById("heartRateChart");
 
     if (!chartContainer) return;
 
     chartContainer.innerHTML = "";
 
     if (weeklyData.length === 0) {
-        chartContainer.textContent = "No heart rate data available";
+
+        chartContainer.textContent =
+            "No heart rate data available";
+
         return;
     }
 
-    let values = weeklyData.map(day => Number(day.heartRate));
+    let values =
+        weeklyData.map(day =>
+            Number(day.heartRate)
+        );
 
     let width = 400;
     let height = 100;
     let padding = 25;
 
-    let minValue = Math.min(...values);
-    let maxValue = Math.max(...values);
+    let minValue =
+        Math.min(...values);
+
+    let maxValue =
+        Math.max(...values);
 
     if (minValue === maxValue) {
         minValue -= 1;
         maxValue += 1;
     }
 
-    let svg = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "svg"
+    let svg =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+    svg.setAttribute(
+        "viewBox",
+        `0 0 ${width} ${height}`
     );
 
-    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
     svg.setAttribute("width", "100%");
     svg.setAttribute("height", "100");
+
+
+    // Line
 
     let points = [];
 
     values.forEach((value, index) => {
 
-        let x = padding +
+        let x =
+            padding +
             index *
             ((width - 2 * padding) /
             Math.max(values.length - 1, 1));
 
-        let y = height -
+        let y =
+            height -
             padding -
             ((value - minValue) /
             (maxValue - minValue)) *
@@ -1011,13 +903,17 @@ function createHeartRateChart() {
         points.push(`${x},${y}`);
     });
 
-    // Line
-    let polyline = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "polyline"
+    let polyline =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "polyline"
+        );
+
+    polyline.setAttribute(
+        "points",
+        points.join(" ")
     );
 
-    polyline.setAttribute("points", points.join(" "));
     polyline.setAttribute("fill", "none");
     polyline.setAttribute("stroke", "#8B0000");
     polyline.setAttribute("stroke-width", "3");
@@ -1026,25 +922,30 @@ function createHeartRateChart() {
 
     svg.appendChild(polyline);
 
+
     // Points + Labels
+
     values.forEach((value, index) => {
 
-        let x = padding +
+        let x =
+            padding +
             index *
             ((width - 2 * padding) /
             Math.max(values.length - 1, 1));
 
-        let y = height -
+        let y =
+            height -
             padding -
             ((value - minValue) /
             (maxValue - minValue)) *
             (height - 2 * padding);
 
-        // Point
-        let circle = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "circle"
-        );
+
+        let circle =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "circle"
+            );
 
         circle.setAttribute("cx", x);
         circle.setAttribute("cy", y);
@@ -1053,11 +954,14 @@ function createHeartRateChart() {
 
         svg.appendChild(circle);
 
+
         // Heart rate value
-        let valueText = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+
+        let valueText =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
 
         valueText.setAttribute("x", x);
         valueText.setAttribute("y", y - 8);
@@ -1065,15 +969,19 @@ function createHeartRateChart() {
         valueText.setAttribute("fill", "black");
         valueText.setAttribute("font-size", "9");
 
-        valueText.textContent = value + " bpm";
+        valueText.textContent =
+            value + " bpm";
 
         svg.appendChild(valueText);
 
+
         // Day label
-        let dayText = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "text"
-        );
+
+        let dayText =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
 
         dayText.setAttribute("x", x);
         dayText.setAttribute("y", height - 5);
@@ -1081,10 +989,12 @@ function createHeartRateChart() {
         dayText.setAttribute("fill", "black");
         dayText.setAttribute("font-size", "9");
 
-        dayText.textContent = "Day " + (index + 1);
+        dayText.textContent =
+            "Day " + (index + 1);
 
         svg.appendChild(dayText);
     });
+
 
     chartContainer.appendChild(svg);
 }
@@ -1106,31 +1016,38 @@ function createBloodSugarChart() {
     chartContainer.innerHTML = "";
 
     if (weeklyData.length === 0) {
+
         chartContainer.textContent =
             "No blood sugar data available";
+
         return;
     }
 
-    let values = weeklyData.map(day =>
-        Number(day.bloodSugar)
-    );
+    let values =
+        weeklyData.map(day =>
+            Number(day.bloodSugar)
+        );
 
     let width = 400;
     let height = 100;
     let padding = 25;
 
-    let minValue = Math.min(...values);
-    let maxValue = Math.max(...values);
+    let minValue =
+        Math.min(...values);
+
+    let maxValue =
+        Math.max(...values);
 
     if (minValue === maxValue) {
         minValue -= 1;
         maxValue += 1;
     }
 
-    let svg = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "svg"
-    );
+    let svg =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
 
     svg.setAttribute(
         "viewBox",
@@ -1139,6 +1056,9 @@ function createBloodSugarChart() {
 
     svg.setAttribute("width", "100%");
     svg.setAttribute("height", "100");
+
+
+    // Line
 
     let points = [];
 
@@ -1160,10 +1080,6 @@ function createBloodSugarChart() {
         points.push(`${x},${y}`);
     });
 
-    // ======================================
-    // LINE
-    // ======================================
-
     let polyline =
         document.createElementNS(
             "http://www.w3.org/2000/svg",
@@ -1175,37 +1091,16 @@ function createBloodSugarChart() {
         points.join(" ")
     );
 
-    polyline.setAttribute(
-        "fill",
-        "none"
-    );
-
-    polyline.setAttribute(
-        "stroke",
-        "#8B0000"
-    );
-
-    polyline.setAttribute(
-        "stroke-width",
-        "3"
-    );
-
-    polyline.setAttribute(
-        "stroke-linecap",
-        "round"
-    );
-
-    polyline.setAttribute(
-        "stroke-linejoin",
-        "round"
-    );
+    polyline.setAttribute("fill", "none");
+    polyline.setAttribute("stroke", "#8B0000");
+    polyline.setAttribute("stroke-width", "3");
+    polyline.setAttribute("stroke-linecap", "round");
+    polyline.setAttribute("stroke-linejoin", "round");
 
     svg.appendChild(polyline);
 
 
-    // ======================================
-    // POINTS + LABELS
-    // ======================================
+    // Points + Labels
 
     values.forEach((value, index) => {
 
@@ -1224,6 +1119,7 @@ function createBloodSugarChart() {
 
 
         // Point
+
         let circle =
             document.createElementNS(
                 "http://www.w3.org/2000/svg",
@@ -1233,15 +1129,13 @@ function createBloodSugarChart() {
         circle.setAttribute("cx", x);
         circle.setAttribute("cy", y);
         circle.setAttribute("r", "3.5");
-        circle.setAttribute(
-            "fill",
-            "#8B0000"
-        );
+        circle.setAttribute("fill", "#8B0000");
 
         svg.appendChild(circle);
 
 
-        // Blood Sugar Value
+        // Blood sugar value
+
         let valueText =
             document.createElementNS(
                 "http://www.w3.org/2000/svg",
@@ -1249,25 +1143,10 @@ function createBloodSugarChart() {
             );
 
         valueText.setAttribute("x", x);
-        valueText.setAttribute(
-            "y",
-            y - 8
-        );
-
-        valueText.setAttribute(
-            "text-anchor",
-            "middle"
-        );
-
-        valueText.setAttribute(
-            "fill",
-            "black"
-        );
-
-        valueText.setAttribute(
-            "font-size",
-            "9"
-        );
+        valueText.setAttribute("y", y - 8);
+        valueText.setAttribute("text-anchor", "middle");
+        valueText.setAttribute("fill", "black");
+        valueText.setAttribute("font-size", "9");
 
         valueText.textContent =
             value + " mg/dL";
@@ -1275,7 +1154,8 @@ function createBloodSugarChart() {
         svg.appendChild(valueText);
 
 
-        // Day Label
+        // Day label
+
         let dayText =
             document.createElementNS(
                 "http://www.w3.org/2000/svg",
@@ -1283,33 +1163,17 @@ function createBloodSugarChart() {
             );
 
         dayText.setAttribute("x", x);
-
-        dayText.setAttribute(
-            "y",
-            height - 5
-        );
-
-        dayText.setAttribute(
-            "text-anchor",
-            "middle"
-        );
-
-        dayText.setAttribute(
-            "fill",
-            "black"
-        );
-
-        dayText.setAttribute(
-            "font-size",
-            "9"
-        );
+        dayText.setAttribute("y", height - 5);
+        dayText.setAttribute("text-anchor", "middle");
+        dayText.setAttribute("fill", "black");
+        dayText.setAttribute("font-size", "9");
 
         dayText.textContent =
             "Day " + (index + 1);
 
         svg.appendChild(dayText);
-
     });
+
 
     chartContainer.appendChild(svg);
 }
@@ -1331,43 +1195,64 @@ function createBloodPressureChart() {
     chartContainer.innerHTML = "";
 
     if (weeklyData.length === 0) {
+
         chartContainer.textContent =
             "No blood pressure data available";
+
         return;
     }
 
-    // Get systolic and diastolic values
-    let systolicValues = weeklyData.map(day =>
-        Number(day.bloodPressure.split("/")[0])
-    );
 
-    let diastolicValues = weeklyData.map(day =>
-        Number(day.bloodPressure.split("/")[1])
-    );
+    // Get systolic and diastolic values
+
+    let systolicValues =
+        weeklyData.map(day =>
+            Number(
+                String(day.bloodPressure || "")
+                    .split("/")[0]
+            )
+        );
+
+    let diastolicValues =
+        weeklyData.map(day =>
+            Number(
+                String(day.bloodPressure || "")
+                    .split("/")[1]
+            )
+        );
+
 
     let width = 400;
     let height = 100;
     let padding = 25;
 
+
     // Find overall min and max
+
     let allValues = [
         ...systolicValues,
         ...diastolicValues
     ];
 
-    let minValue = Math.min(...allValues);
-    let maxValue = Math.max(...allValues);
+    let minValue =
+        Math.min(...allValues);
+
+    let maxValue =
+        Math.max(...allValues);
 
     if (minValue === maxValue) {
         minValue -= 1;
         maxValue += 1;
     }
 
+
     // Create SVG
-    let svg = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "svg"
-    );
+
+    let svg =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
 
     svg.setAttribute(
         "viewBox",
@@ -1402,7 +1287,6 @@ function createBloodPressureChart() {
                 (height - 2 * padding);
 
             points.push(`${x},${y}`);
-
         });
 
         return points;
@@ -1427,30 +1311,11 @@ function createBloodPressureChart() {
         systolicPoints.join(" ")
     );
 
-    systolicLine.setAttribute(
-        "fill",
-        "none"
-    );
-
-    systolicLine.setAttribute(
-        "stroke",
-        "#8B0000"
-    );
-
-    systolicLine.setAttribute(
-        "stroke-width",
-        "3"
-    );
-
-    systolicLine.setAttribute(
-        "stroke-linecap",
-        "round"
-    );
-
-    systolicLine.setAttribute(
-        "stroke-linejoin",
-        "round"
-    );
+    systolicLine.setAttribute("fill", "none");
+    systolicLine.setAttribute("stroke", "#8B0000");
+    systolicLine.setAttribute("stroke-width", "3");
+    systolicLine.setAttribute("stroke-linecap", "round");
+    systolicLine.setAttribute("stroke-linejoin", "round");
 
     svg.appendChild(systolicLine);
 
@@ -1473,25 +1338,10 @@ function createBloodPressureChart() {
         diastolicPoints.join(" ")
     );
 
-    diastolicLine.setAttribute(
-        "fill",
-        "none"
-    );
-
-    diastolicLine.setAttribute(
-        "stroke",
-        "#8B0000"
-    );
-
-    diastolicLine.setAttribute(
-        "stroke-width",
-        "2"
-    );
-
-    diastolicLine.setAttribute(
-        "stroke-dasharray",
-        "5,3"
-    );
+    diastolicLine.setAttribute("fill", "none");
+    diastolicLine.setAttribute("stroke", "#8B0000");
+    diastolicLine.setAttribute("stroke-width", "2");
+    diastolicLine.setAttribute("stroke-dasharray", "5,3");
 
     svg.appendChild(diastolicLine);
 
@@ -1516,6 +1366,7 @@ function createBloodPressureChart() {
 
 
         // Systolic Y
+
         let systolicY =
             height -
             padding -
@@ -1525,6 +1376,7 @@ function createBloodPressureChart() {
 
 
         // Diastolic Y
+
         let diastolicY =
             height -
             padding -
@@ -1534,76 +1386,46 @@ function createBloodPressureChart() {
 
 
         // Systolic Point
+
         let systolicCircle =
             document.createElementNS(
                 "http://www.w3.org/2000/svg",
                 "circle"
             );
 
-        systolicCircle.setAttribute(
-            "cx",
-            x
-        );
-
-        systolicCircle.setAttribute(
-            "cy",
-            systolicY
-        );
-
-        systolicCircle.setAttribute(
-            "r",
-            "3.5"
-        );
-
-        systolicCircle.setAttribute(
-            "fill",
-            "#8B0000"
-        );
+        systolicCircle.setAttribute("cx", x);
+        systolicCircle.setAttribute("cy", systolicY);
+        systolicCircle.setAttribute("r", "3.5");
+        systolicCircle.setAttribute("fill", "#8B0000");
 
         svg.appendChild(systolicCircle);
 
 
         // Diastolic Point
+
         let diastolicCircle =
             document.createElementNS(
                 "http://www.w3.org/2000/svg",
                 "circle"
             );
 
-        diastolicCircle.setAttribute(
-            "cx",
-            x
-        );
-
-        diastolicCircle.setAttribute(
-            "cy",
-            diastolicY
-        );
-
-        diastolicCircle.setAttribute(
-            "r",
-            "3"
-        );
-
-        diastolicCircle.setAttribute(
-            "fill",
-            "#8B0000"
-        );
+        diastolicCircle.setAttribute("cx", x);
+        diastolicCircle.setAttribute("cy", diastolicY);
+        diastolicCircle.setAttribute("r", "3");
+        diastolicCircle.setAttribute("fill", "#8B0000");
 
         svg.appendChild(diastolicCircle);
 
 
         // Blood Pressure Label
+
         let valueText =
             document.createElementNS(
                 "http://www.w3.org/2000/svg",
                 "text"
             );
 
-        valueText.setAttribute(
-            "x",
-            x
-        );
+        valueText.setAttribute("x", x);
 
         valueText.setAttribute(
             "y",
@@ -1635,42 +1457,23 @@ function createBloodPressureChart() {
 
 
         // Day Label
+
         let dayText =
             document.createElementNS(
                 "http://www.w3.org/2000/svg",
                 "text"
             );
 
-        dayText.setAttribute(
-            "x",
-            x
-        );
-
-        dayText.setAttribute(
-            "y",
-            height - 5
-        );
-
-        dayText.setAttribute(
-            "text-anchor",
-            "middle"
-        );
-
-        dayText.setAttribute(
-            "fill",
-            "black"
-        );
-
-        dayText.setAttribute(
-            "font-size",
-            "9"
-        );
+        dayText.setAttribute("x", x);
+        dayText.setAttribute("y", height - 5);
+        dayText.setAttribute("text-anchor", "middle");
+        dayText.setAttribute("fill", "black");
+        dayText.setAttribute("font-size", "9");
 
         dayText.textContent =
             "Day " + (index + 1);
 
         svg.appendChild(dayText);
-
     });
 
 
@@ -1720,287 +1523,438 @@ function createBloodPressureChart() {
 
 createBloodPressureChart();
 
-async function getMCPHealthAnalysis() {
-    try {
-        const response = await fetch("http://127.0.0.1:5000/analyze", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                healthData: weeklyData
-            })
-        });
 
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
+// ==========================================
+// LOAD SAVED AI HEALTH ANALYSIS
+// ==========================================
 
-        const data = await response.json();
+function loadAIReport() {
 
-        console.log("MCP HEALTH ANALYSIS:", data);
-
-        return data;
-
-    } catch (error) {
-        console.error("MCP Analysis Error:", error);
-    }
-}
-
-async function getMCPHealthAnalysis() {
-    try {
-        const response = await fetch("http://127.0.0.1:5000/analyze", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                healthData: weeklyData
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        console.log("MCP HEALTH ANALYSIS:", data);
-
-        return data;
-
-    } catch (error) {
-        console.error("MCP Analysis Error:", error);
-    }
-}
-
-
-async function loadMCPReport() {
-
-    const response = await getMCPHealthAnalysis();
-
-    if (!response) {
-        console.error("No MCP response received");
+    if (!healthSummaryElement) {
+        console.error(
+            "healthSummary element not found"
+        );
         return;
     }
 
-    const mcpData = JSON.parse(
-        response.result.content[0].text
-    );
 
-    console.log("FINAL MCP REPORT DATA:", mcpData);
+    // Get saved response from localStorage
 
-
-    // ======================================
-    // SHOW SCORES
-    // ======================================
-
-    healthScoreElement.textContent =
-        `${mcpData.healthScore} / 100`;
-
-    waterScoreElement.textContent =
-        `${mcpData.scores.water} / 20`;
-
-    sleepScoreElement.textContent =
-        `${mcpData.scores.sleep} / 20`;
-
-    heartRateScoreElement.textContent =
-        `${mcpData.scores.heartRate} / 20`;
-
-    bloodSugarScoreElement.textContent =
-        `${mcpData.scores.bloodSugar} / 15`;
-
-    bloodPressureScoreElement.textContent =
-        `${mcpData.scores.bloodPressure} / 15`;
-
-    weightScoreElement.textContent =
-        `${mcpData.scores.weight} / 10`;
+    const savedAnalysis =
+        localStorage.getItem("healthAnalysis");
 
 
-    // ======================================
-    // SHOW AI HEALTH SUMMARY
-    // ======================================
+    if (!savedAnalysis) {
 
-    healthSummaryElement.innerHTML = "";
+        console.log(
+            "No AI health analysis found."
+        );
 
-    let summary = mcpData.aiSummary;
+        healthSummaryElement.innerHTML =
+            "<p>AI health analysis is not available yet.</p>";
 
-
-    // Remove Markdown ### and ** symbols
-    summary = summary
-        .replace(/###/g, "")
-        .replace(/\*\*/g, "");
-
-
-    // Split into lines
-    let lines = summary.split("\n");
-
-    let html = "";
-
-    let inList = false;
-
-
-    lines.forEach(line => {
-
-        line = line.trim();
-
-        if (!line) return;
-
-
-        // ==================================
-        // HEADINGS
-        // ==================================
-
-        if (
-            line.toLowerCase() === "personalized health summary" ||
-            line.toLowerCase() === "7-day health summary" ||
-            line.toLowerCase() === "practical recommendations"
-        ) {
-
-            if (inList) {
-                html += "</ol>";
-                inList = false;
-            }
-
-            html += `<h3>${line}</h3>`;
-        }
-
-
-        // ==================================
-        // NUMBERED RECOMMENDATIONS
-        // ==================================
-
-        else if (/^\d+\.\s/.test(line)) {
-
-            if (!inList) {
-                html += "<ol>";
-                inList = true;
-            }
-
-            let recommendation =
-                line.replace(/^\d+\.\s*/, "");
-
-            html += `<li>${recommendation}</li>`;
-        }
-
-
-        // ==================================
-        // NORMAL PARAGRAPH
-        // ==================================
-
-        else {
-
-            if (inList) {
-                html += "</ol>";
-                inList = false;
-            }
-
-            html += `<p>${line}</p>`;
-        }
-
-    });
-
-
-    if (inList) {
-        html += "</ol>";
+        return;
     }
 
 
-    // Show final formatted summary
-    healthSummaryElement.innerHTML = html;
+    try {
 
+        const response =
+            JSON.parse(savedAnalysis);
+
+        console.log(
+            "SAVED AI RESPONSE:",
+            response
+        );
+
+
+        // ======================================
+        // GET MCP RESULT
+        // ======================================
+
+        if (
+            !response.result ||
+            !response.result.content ||
+            !response.result.content[0] ||
+            !response.result.content[0].text
+        ) {
+
+            throw new Error(
+                "Invalid AI response format"
+            );
+        }
+
+
+        const mcpData =
+            JSON.parse(
+                response.result.content[0].text
+            );
+
+        console.log(
+            "FINAL AI REPORT DATA:",
+            mcpData
+        );
+
+
+        // ======================================
+        // SHOW AI SCORES
+        // ======================================
+
+        if (healthScoreElement) {
+
+            healthScoreElement.textContent =
+                mcpData.healthScore + " / 100";
+        }
+
+        if (waterScoreElement) {
+
+            waterScoreElement.textContent =
+                Number(mcpData.scores.water).toFixed(1) +
+                " / 20";
+        }
+
+        if (sleepScoreElement) {
+
+            sleepScoreElement.textContent =
+                Number(mcpData.scores.sleep).toFixed(1) +
+                " / 20";
+        }
+
+        if (heartRateScoreElement) {
+
+            heartRateScoreElement.textContent =
+                Number(mcpData.scores.heartRate).toFixed(1) +
+                " / 20";
+        }
+
+        if (bloodSugarScoreElement) {
+
+            bloodSugarScoreElement.textContent =
+                Number(mcpData.scores.bloodSugar).toFixed(1) +
+                " / 15";
+        }
+
+        if (bloodPressureScoreElement) {
+
+            bloodPressureScoreElement.textContent =
+                Number(mcpData.scores.bloodPressure).toFixed(1) +
+                " / 15";
+        }
+
+        if (weightScoreElement) {
+
+            weightScoreElement.textContent =
+                Number(mcpData.scores.weight).toFixed(1) +
+                " / 10";
+        }
+
+
+        // ======================================
+        // SHOW AI SUMMARY
+        // ======================================
+
+        let summary =
+            mcpData.aiSummary || "";
+
+        summary = String(summary)
+            .replace(/###/g, "")
+            .replace(/\*\*/g, "")
+            .trim();
+
+
+        if (!summary) {
+
+            healthSummaryElement.innerHTML =
+                "<p>No AI summary available.</p>";
+
+            return;
+        }
+
+
+        // Split summary into lines
+
+        let lines =
+            summary.split("\n");
+
+        let html = "";
+
+        let inList = false;
+
+
+        lines.forEach(line => {
+
+            line = line.trim();
+
+            if (!line) return;
+
+
+            // ==================================
+            // HEADINGS
+            // ==================================
+
+            if (
+                line.toLowerCase() ===
+                    "personalized health summary" ||
+
+                line.toLowerCase() ===
+                    "7-day health summary" ||
+
+                line.toLowerCase() ===
+                    "practical recommendations"
+            ) {
+
+                if (inList) {
+
+                    html += "</ol>";
+                    inList = false;
+                }
+
+                html +=
+                    `<h3>${line}</h3>`;
+
+            }
+
+
+            // ==================================
+            // NUMBERED RECOMMENDATIONS
+            // ==================================
+
+            else if (
+                /^\d+\.\s/.test(line)
+            ) {
+
+                if (!inList) {
+
+                    html += "<ol>";
+                    inList = true;
+                }
+
+                let recommendation =
+                    line.replace(
+                        /^\d+\.\s*/,
+                        ""
+                    );
+
+                html +=
+                    `<li>${recommendation}</li>`;
+            }
+
+
+            // ==================================
+            // NORMAL PARAGRAPH
+            // ==================================
+
+            else {
+
+                if (inList) {
+
+                    html += "</ol>";
+                    inList = false;
+                }
+
+                html +=
+                    `<p>${line}</p>`;
+            }
+
+        });
+
+
+        if (inList) {
+            html += "</ol>";
+        }
+
+
+        // Display formatted AI summary
+
+        healthSummaryElement.innerHTML =
+            html;
+
+
+        console.log(
+            "AI health report displayed successfully!"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "AI Report Error:",
+            error
+        );
+
+        healthSummaryElement.innerHTML =
+            "<p>Unable to load AI health report.</p>";
+    }
 }
 
 
 // ==========================================
-// LOAD MCP REPORT
+// LOAD AI REPORT
 // ==========================================
 
-loadMCPReport();
-// ===============================
+loadAIReport();
+
+
+// ==========================================
 // DOWNLOAD PDF REPORT
-// ===============================
+// ==========================================
 
-document.getElementById("downloadBtn").addEventListener("click", async () => {
+let downloadButton =
+    document.getElementById("downloadBtn");
 
-    const button = document.getElementById("downloadBtn");
 
-    try {
+if (downloadButton) {
 
-        button.textContent = "Generating PDF...";
-        button.disabled = true;
+    downloadButton.addEventListener(
+        "click",
+        async () => {
 
-        const report = document.querySelector(".report-card");
+            const button =
+                downloadButton;
 
-        const canvas = await html2canvas(report, {
-            scale: 2,
-            useCORS: true,
-            backgroundColor: "#ffffff"
-        });
+            try {
 
-        const imgData = canvas.toDataURL("image/png");
+                button.textContent =
+                    "Generating PDF...";
 
-        const { jsPDF } = window.jspdf;
+                button.disabled = true;
 
-        const pdf = new jsPDF("p", "mm", "a4");
 
-        const pageWidth = 210;
-        const pageHeight = 297;
+                const report =
+                    document.querySelector(
+                        ".report-card"
+                    );
 
-        const margin = 10;
 
-        const imgWidth = pageWidth - (margin * 2);
+                if (!report) {
 
-        const imgHeight =
-            (canvas.height * imgWidth) / canvas.width;
+                    throw new Error(
+                        "Report card not found"
+                    );
+                }
 
-        let heightLeft = imgHeight;
-        let position = margin;
 
-        pdf.addImage(
-            imgData,
-            "PNG",
-            margin,
-            position,
-            imgWidth,
-            imgHeight
-        );
+                const canvas =
+                    await html2canvas(
+                        report,
+                        {
+                            scale: 2,
+                            useCORS: true,
+                            backgroundColor: "#ffffff"
+                        }
+                    );
 
-        heightLeft -= pageHeight - margin * 2;
 
-        while (heightLeft > 0) {
+                const imgData =
+                    canvas.toDataURL(
+                        "image/png"
+                    );
 
-            position = heightLeft - imgHeight + margin;
 
-            pdf.addPage();
+                const { jsPDF } =
+                    window.jspdf;
 
-            pdf.addImage(
-                imgData,
-                "PNG",
-                margin,
-                position,
-                imgWidth,
-                imgHeight
-            );
 
-            heightLeft -= pageHeight - margin * 2;
+                const pdf =
+                    new jsPDF(
+                        "p",
+                        "mm",
+                        "a4"
+                    );
+
+
+                const pageWidth = 210;
+                const pageHeight = 297;
+                const margin = 10;
+
+                const imgWidth =
+                    pageWidth -
+                    (margin * 2);
+
+                const imgHeight =
+                    (canvas.height * imgWidth) /
+                    canvas.width;
+
+
+                let heightLeft =
+                    imgHeight;
+
+                let position =
+                    margin;
+
+
+                pdf.addImage(
+                    imgData,
+                    "PNG",
+                    margin,
+                    position,
+                    imgWidth,
+                    imgHeight
+                );
+
+
+                heightLeft -=
+                    pageHeight -
+                    margin * 2;
+
+
+                while (heightLeft > 0) {
+
+                    position =
+                        heightLeft -
+                        imgHeight +
+                        margin;
+
+                    pdf.addPage();
+
+                    pdf.addImage(
+                        imgData,
+                        "PNG",
+                        margin,
+                        position,
+                        imgWidth,
+                        imgHeight
+                    );
+
+                    heightLeft -=
+                        pageHeight -
+                        margin * 2;
+                }
+
+
+                pdf.save(
+                    "HealthTrack-AI-Weekly-Report.pdf"
+                );
+
+
+                button.textContent =
+                    "📄 Download PDF Report";
+
+                button.disabled = false;
+
+
+                console.log(
+                    "PDF generated successfully!"
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "PDF Generation Error:",
+                    error
+                );
+
+
+                button.textContent =
+                    "📄 Download PDF Report";
+
+                button.disabled = false;
+
+
+                alert(
+                    "Unable to generate PDF. Please try again."
+                );
+            }
         }
+    );
+}
 
-        pdf.save("HealthTrack-AI-Weekly-Report.pdf");
-
-        button.textContent = "📄 Download PDF Report";
-        button.disabled = false;
-
-        console.log("PDF generated successfully!");
-
-    } catch (error) {
-
-        console.error("PDF Generation Error:", error);
-
-        button.textContent = "📄 Download PDF Report";
-        button.disabled = false;
-
-        alert("Unable to generate PDF. Please try again.");
-    }
-
-});
