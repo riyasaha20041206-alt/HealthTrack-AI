@@ -20,27 +20,41 @@ let weeklyData = JSON.parse(localStorage.getItem("weeklyData")) || [];
 let saveBtn = document.getElementById("saveBtn");
 
 
-// ======================================
-// HEALTH SCORE CALCULATION FUNCTION
-// ======================================
+// Safely update an HTML element
+function setText(element, value) {
+    if (element) {
+        element.textContent = value;
+    }
+}
 
+
+// Calculate Health Score
 function calculateHealthScore() {
 
-    // Need exactly 7 days
+    console.log("Days Completed:", weeklyData.length);
+
+    // Health score cannot be calculated before 7 days
     if (weeklyData.length < 7) {
-        console.log("Days Completed:", weeklyData.length);
-        healthScoreElement.textContent = "-- / 100";
+
+        setText(healthScoreElement, "-- / 100");
+
+        setText(waterScoreElement, "-- / 20");
+        setText(sleepScoreElement, "-- / 20");
+        setText(heartRateScoreElement, "-- / 20");
+        setText(bloodSugarScoreElement, "-- / 15");
+        setText(bloodPressureScoreElement, "-- / 15");
+        setText(weightScoreElement, "-- / 10");
+
         return;
     }
 
 
-    // ======================================
-    // WATER SCORE - 20
-    // ======================================
+    // ---------------- WATER SCORE ----------------
 
     let goodWaterDays = 0;
 
     for (let i = 0; i < 7; i++) {
+
         if (weeklyData[i].waterIntake >= 2) {
             goodWaterDays++;
         }
@@ -52,13 +66,12 @@ function calculateHealthScore() {
     console.log("Water Score:", waterFinalScore);
 
 
-    // ======================================
-    // SLEEP SCORE - 20
-    // ======================================
+    // ---------------- SLEEP SCORE ----------------
 
     let goodSleepDays = 0;
 
     for (let i = 0; i < 7; i++) {
+
         if (weeklyData[i].sleepHours >= 7) {
             goodSleepDays++;
         }
@@ -70,17 +83,18 @@ function calculateHealthScore() {
     console.log("Sleep Score:", sleepFinalScore);
 
 
-    // ======================================
-    // HEART RATE SCORE - 20
-    // ======================================
+    // ---------------- HEART RATE SCORE ----------------
 
     let goodHeartRateDays = 0;
 
     for (let i = 0; i < 7; i++) {
 
-        let heartRateValue = weeklyData[i].heartRate;
+        let heartRateValue = Number(weeklyData[i].heartRate);
 
-        if (heartRateValue >= 60 && heartRateValue <= 100) {
+        if (
+            heartRateValue >= 60 &&
+            heartRateValue <= 100
+        ) {
             goodHeartRateDays++;
         }
     }
@@ -91,17 +105,18 @@ function calculateHealthScore() {
     console.log("Heart Rate Score:", heartRateFinalScore);
 
 
-    // ======================================
-    // BLOOD SUGAR SCORE - 15
-    // ======================================
+    // ---------------- BLOOD SUGAR SCORE ----------------
 
     let goodBloodSugarDays = 0;
 
     for (let i = 0; i < 7; i++) {
 
-        let sugar = weeklyData[i].bloodSugar;
+        let sugar = Number(weeklyData[i].bloodSugar);
 
-        if (sugar >= 70 && sugar <= 99) {
+        if (
+            sugar >= 70 &&
+            sugar <= 99
+        ) {
             goodBloodSugarDays++;
         }
     }
@@ -112,15 +127,13 @@ function calculateHealthScore() {
     console.log("Blood Sugar Score:", bloodSugarFinalScore);
 
 
-    // ======================================
-    // BLOOD PRESSURE SCORE - 15
-    // ======================================
+    // ---------------- BLOOD PRESSURE SCORE ----------------
 
     let goodBloodPressureDays = 0;
 
     for (let i = 0; i < 7; i++) {
 
-        let bp = weeklyData[i].bloodPressure.split("/");
+        let bp = String(weeklyData[i].bloodPressure).split("/");
 
         let systolic = Number(bp[0]);
         let diastolic = Number(bp[1]);
@@ -135,20 +148,26 @@ function calculateHealthScore() {
         }
     }
 
-    let bloodPressureFinalScore = (goodBloodPressureDays / 7) * 15;
+    let bloodPressureFinalScore =
+        (goodBloodPressureDays / 7) * 15;
 
-    console.log("Good Blood Pressure Days:", goodBloodPressureDays);
-    console.log("Blood Pressure Score:", bloodPressureFinalScore);
+    console.log(
+        "Good Blood Pressure Days:",
+        goodBloodPressureDays
+    );
+
+    console.log(
+        "Blood Pressure Score:",
+        bloodPressureFinalScore
+    );
 
 
-    // ======================================
-    // WEIGHT SCORE - 10
-    // ======================================
+    // ---------------- WEIGHT SCORE ----------------
 
     let totalWeight = 0;
 
     for (let i = 0; i < 7; i++) {
-        totalWeight += weeklyData[i].weight;
+        totalWeight += Number(weeklyData[i].weight);
     }
 
     let averageWeight = totalWeight / 7;
@@ -161,7 +180,7 @@ function calculateHealthScore() {
     for (let i = 0; i < 7; i++) {
 
         let difference = Math.abs(
-            weeklyData[i].weight - averageWeight
+            Number(weeklyData[i].weight) - averageWeight
         );
 
         if (difference <= 5) {
@@ -171,13 +190,18 @@ function calculateHealthScore() {
 
     let weightFinalScore = (goodWeightDays / 7) * 10;
 
-    console.log("Good Weight Days:", goodWeightDays);
-    console.log("Weight Score:", weightFinalScore);
+    console.log(
+        "Good Weight Days:",
+        goodWeightDays
+    );
+
+    console.log(
+        "Weight Score:",
+        weightFinalScore
+    );
 
 
-    // ======================================
-    // FINAL HEALTH SCORE - 100
-    // ======================================
+    // ---------------- FINAL HEALTH SCORE ----------------
 
     let totalHealthScore =
         waterFinalScore +
@@ -195,163 +219,172 @@ function calculateHealthScore() {
     );
 
 
-    // Show score on webpage
+    // Safely display scores
 
-    healthScoreElement.textContent =
-        totalHealthScore + " / 100";
+    setText(
+        healthScoreElement,
+        totalHealthScore + " / 100"
+    );
 
-    waterScoreElement.textContent =
-        waterFinalScore.toFixed(1) + " / 20";
+    setText(
+        waterScoreElement,
+        waterFinalScore.toFixed(1) + " / 20"
+    );
 
-    sleepScoreElement.textContent =
-        sleepFinalScore.toFixed(1) + " / 20";
+    setText(
+        sleepScoreElement,
+        sleepFinalScore.toFixed(1) + " / 20"
+    );
 
-    heartRateScoreElement.textContent =
-        heartRateFinalScore.toFixed(1) + " / 20";
+    setText(
+        heartRateScoreElement,
+        heartRateFinalScore.toFixed(1) + " / 20"
+    );
 
-    bloodSugarScoreElement.textContent =
-        bloodSugarFinalScore.toFixed(1) + " / 15";
+    setText(
+        bloodSugarScoreElement,
+        bloodSugarFinalScore.toFixed(1) + " / 15"
+    );
 
-    bloodPressureScoreElement.textContent =
-        bloodPressureFinalScore.toFixed(1) + " / 15";
+    setText(
+        bloodPressureScoreElement,
+        bloodPressureFinalScore.toFixed(1) + " / 15"
+    );
 
-    weightScoreElement.textContent =
-        weightFinalScore.toFixed(1) + " / 10";
+    setText(
+        weightScoreElement,
+        weightFinalScore.toFixed(1) + " / 10"
+    );
 }
 
 
-// ======================================
-// SAVE TODAY'S DATA
-// ======================================
+// ---------------- SAVE BUTTON ----------------
 
-saveBtn.addEventListener("click", async function () {
+if (saveBtn) {
 
-    // Validation
+    saveBtn.addEventListener("click", async function () {
 
-    if (weight.value === "") {
-        alert("Please enter your weight");
-        return;
-    }
-
-    if (bloodPressure.value === "") {
-        alert("Please enter Blood Pressure");
-        return;
-    }
-
-    if (bloodSugar.value === "") {
-        alert("Please enter Blood Sugar");
-        return;
-    }
-
-    if (heartRate.value === "") {
-        alert("Please enter Heart Rate");
-        return;
-    }
-
-    if (waterIntake.value === "") {
-        alert("Please enter Water Intake");
-        return;
-    }
-
-    if (sleepHours.value === "") {
-        alert("Please enter Sleep Hours");
-        return;
-    }
+        // Validate Weight
+        if (weight.value === "") {
+            alert("Please enter your weight");
+            return;
+        }
 
 
-    // ======================================
-    // TODAY'S DATA
-    // ======================================
-
-    let todayData = {
-
-        weight: Number(weight.value),
-
-        bloodPressure: bloodPressure.value,
-
-        bloodSugar: Number(bloodSugar.value),
-
-        heartRate: Number(heartRate.value),
-
-        waterIntake: Number(waterIntake.value),
-
-        sleepHours: Number(sleepHours.value)
-    };
+        // Validate Blood Pressure
+        if (bloodPressure.value === "") {
+            alert("Please enter Blood Pressure");
+            return;
+        }
 
 
-    // ======================================
-    // CHECK MAX 7 DAYS
-    // ======================================
-
-    if (weeklyData.length >= 7) {
-
-        alert("7 days data already completed!");
-
-        return;
-    }
+        // Validate Blood Sugar
+        if (bloodSugar.value === "") {
+            alert("Please enter Blood Sugar");
+            return;
+        }
 
 
-    // Add today's data
-
-    weeklyData.push(todayData);
-
-
-    // Save to Local Storage
-
-    localStorage.setItem(
-        "weeklyData",
-        JSON.stringify(weeklyData)
-    );
+        // Validate Heart Rate
+        if (heartRate.value === "") {
+            alert("Please enter Heart Rate");
+            return;
+        }
 
 
-    console.log("Today's Data:", todayData);
-
-    console.log("Weekly Data:", weeklyData);
-
-    console.log(
-        "Days Completed:",
-        weeklyData.length
-    );
+        // Validate Water Intake
+        if (waterIntake.value === "") {
+            alert("Please enter Water Intake");
+            return;
+        }
 
 
-    // Calculate Health Score
-
-    calculateHealthScore();
-
-
-    // ======================================
-    // SEND DATA AFTER 7 DAYS
-    // ======================================
-
-    if (weeklyData.length === 7) {
-
-        await sendDataToBackend();
-
-    }
+        // Validate Sleep Hours
+        if (sleepHours.value === "") {
+            alert("Please enter Sleep Hours");
+            return;
+        }
 
 
-    alert("Data Saved Successfully!");
+        // Check 7 days limit
+        if (weeklyData.length >= 7) {
 
-});
+            alert("7 days data already completed!");
 
-
-// ======================================
-// CALCULATE SCORE WHEN PAGE OPENS
-// ======================================
-
-//calculateHealthScore();
+            return;
+        }
 
 
-// ======================================
-// SEND DATA TO BACKEND
-// ======================================
+        // Today's health data
+        let todayData = {
+
+            weight: Number(weight.value),
+
+            bloodPressure: bloodPressure.value,
+
+            bloodSugar: Number(bloodSugar.value),
+
+            heartRate: Number(heartRate.value),
+
+            waterIntake: Number(waterIntake.value),
+
+            sleepHours: Number(sleepHours.value)
+        };
+
+
+        // Save data
+        weeklyData.push(todayData);
+
+
+        localStorage.setItem(
+            "weeklyData",
+            JSON.stringify(weeklyData)
+        );
+
+
+        console.log(
+            "Today's Data:",
+            todayData
+        );
+
+        console.log(
+            "Weekly Data:",
+            weeklyData
+        );
+
+        console.log(
+            "Days Completed:",
+            weeklyData.length
+        );
+
+
+        // Calculate health score
+        calculateHealthScore();
+
+
+        // Send to Render backend after 7 days
+        if (weeklyData.length === 7) {
+
+            await sendDataToBackend();
+
+        }
+
+
+        alert("Data Saved Successfully!");
+
+    });
+
+}
+
+
+// ---------------- SEND DATA TO BACKEND ----------------
 
 async function sendDataToBackend() {
 
     try {
 
         const response = await fetch(
-    "https://healthtrack-ai-oydh.onrender.com/analyze",
+            "https://healthtrack-ai-oydh.onrender.com/analyze",
             {
                 method: "POST",
 
@@ -373,12 +406,19 @@ async function sendDataToBackend() {
             "Backend Response:",
             result
         );
-localStorage.setItem(
-    "healthAnalysis",
-    JSON.stringify(result)
-);
 
-console.log("AI RESULT SAVED:", result);
+
+        localStorage.setItem(
+            "healthAnalysis",
+            JSON.stringify(result)
+        );
+
+
+        console.log(
+            "AI RESULT SAVED:",
+            result
+        );
+
 
     } catch (error) {
 
@@ -389,4 +429,3 @@ console.log("AI RESULT SAVED:", result);
 
     }
 }
-
