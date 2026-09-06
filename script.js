@@ -373,7 +373,12 @@ async function sendDataToBackend() {
             "Backend Response:",
             result
         );
+localStorage.setItem(
+    "healthAnalysis",
+    JSON.stringify(result)
+);
 
+console.log("AI RESULT SAVED:", result);
 
     } catch (error) {
 
