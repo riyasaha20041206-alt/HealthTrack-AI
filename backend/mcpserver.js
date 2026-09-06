@@ -6,6 +6,11 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 
+console.error(
+    "OPENAI_API_KEY present:",
+    Boolean(process.env.OPENAI_API_KEY)
+);
+
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
