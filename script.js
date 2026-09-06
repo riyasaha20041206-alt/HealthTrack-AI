@@ -351,7 +351,7 @@ async function sendDataToBackend() {
     try {
 
         const response = await fetch(
-            "http://localhost:5000/analyze",
+    "https://healthtrack-ai-oydh.onrender.com/analyze",
             {
                 method: "POST",
 
