@@ -8,7 +8,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
+console.log("================================");
+console.log("OPENAI KEY AVAILABLE:", Boolean(process.env.OPENAI_API_KEY));
+console.log("================================");
 
 // ===============================
 // MCP CLIENT CONNECTION
