@@ -23,7 +23,8 @@ const mcpClient = new Client({
 
 const transport = new StdioClientTransport({
     command: "node",
-    args: ["mcpserver.js"]
+    args: ["mcpserver.js"],
+    env: process.env
 });
 
 await mcpClient.connect(transport);
